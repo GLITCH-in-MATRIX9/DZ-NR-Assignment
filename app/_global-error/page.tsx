@@ -1,10 +1,7 @@
-
-"use client"; 
+"use client";
 
 import React from "react";
 import Link from "next/link";
-
-
 
 export default function GlobalErrorPage({ error, reset }: { error?: Error; reset?: () => void }) {
   return (
@@ -16,7 +13,7 @@ export default function GlobalErrorPage({ error, reset }: { error?: Error; reset
         </p>
       )}
       <button
-        onClick={reset}
+        onClick={() => reset && reset()}
         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
       >
         Try Again
