@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Search,
   Flame,
@@ -23,26 +23,48 @@ const Navbar = () => {
   const [mobileMenu, setMobileMenu] = useState(false);
   const [notifications, setNotifications] = useState<any[]>([]);
 
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
   const avatarSrc =
     user?.avatarUrl || `https://picsum.photos/200?random=${user?._id || 1}`;
 
+  /* ---------------- Notifications ---------------- */
   const fetchNotifications = async () => {
     if (!user?.token) return;
+
     const res = await fetch("/api/notifications", {
       headers: { Authorization: `Bearer ${user.token}` },
     });
+
     const data = await res.json();
     setNotifications(data.notifications || []);
   };
 
   useEffect(() => {
     if (!user) return;
+
     fetchNotifications();
     const i = setInterval(fetchNotifications, 5000);
     return () => clearInterval(i);
   }, [user]);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  /* ---------------- Close dropdown on outside click ---------------- */
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(e.target as Node)
+      ) {
+        setOpenDropdown(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () =>
+      document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[999] backdrop-blur-xl bg-black/70 border-b border-white/5">
@@ -75,7 +97,6 @@ const Navbar = () => {
 
           {/* DESKTOP ACTIONS */}
           <div className="hidden md:flex items-center gap-3">
-
             {!user && (
               <>
                 <button className="text-white px-4 py-2 rounded-full bg-[#1a1a1a]">
@@ -92,8 +113,9 @@ const Navbar = () => {
 
             {user && (
               <>
+                {/* NOTIFICATIONS */}
                 <button
-                  onClick={() => setOpenNotifications(!openNotifications)}
+                  onClick={() => setOpenNotifications((p) => !p)}
                   className="relative p-2 rounded-full hover:bg-white/10"
                 >
                   <Bell className="w-5 h-5 text-white" />
@@ -102,18 +124,58 @@ const Navbar = () => {
                   )}
                 </button>
 
-                <img
-                  src={avatarSrc}
-                  className="w-9 h-9 rounded-full cursor-pointer"
-                  onClick={() => setOpenDropdown(!openDropdown)}
-                />
+                {/* PROFILE DROPDOWN */}
+                <div className="relative" ref={dropdownRef}>
+                  <img
+                    src={avatarSrc}
+                    className="w-9 h-9 rounded-full cursor-pointer"
+                    onClick={() => setOpenDropdown((p) => !p)}
+                  />
+
+                  {openDropdown && (
+                    <div className="absolute right-0 mt-3 w-48 bg-[#111] border border-white/10 rounded-xl shadow-xl overflow-hidden z-50">
+                      <button
+                        onClick={() => {
+                          setOpenDropdown(false);
+                          router.push("/profile");
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/10"
+                      >
+                        <User className="w-4 h-4" />
+                        Profile
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setOpenDropdown(false);
+                          router.push("/settings");
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/10"
+                      >
+                        <Settings className="w-4 h-4" />
+                        Settings
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          setOpenDropdown(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-white/10"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Logout
+                      </button>
+                    </div>
+                  )}
+                </div>
               </>
             )}
           </div>
 
           {/* MOBILE TOGGLE */}
           <button
-            onClick={() => setMobileMenu(!mobileMenu)}
+            onClick={() => setMobileMenu((p) => !p)}
             className="md:hidden text-white"
           >
             {mobileMenu ? <X /> : <Menu />}
@@ -124,8 +186,6 @@ const Navbar = () => {
       {/* MOBILE MENU */}
       {mobileMenu && (
         <div className="md:hidden bg-black/95 border-t border-white/10 px-4 py-4 space-y-4">
-
-          {/* MOBILE SEARCH */}
           <div className="flex items-center bg-[#111] rounded-full px-4 py-2">
             <Search className="w-4 h-4 text-gray-400 mr-3" />
             <input

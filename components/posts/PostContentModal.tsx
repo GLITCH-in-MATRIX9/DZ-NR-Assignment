@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 interface PostContentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onPostCreated: () => void; // ⭐ REQUIRED
+  onPostCreated: () => void;
 }
 
 const PostContentModal: React.FC<PostContentModalProps> = ({
@@ -17,38 +17,6 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
 }) => {
   const { user } = useAuth();
 
-  const [content, setContent] = useState("");
-//added..
- const handlePost = async () => {
-  if (!content.trim()) return;
-
-  try {
-    const token = localStorage.getItem("token");
-
-    const formData = new FormData();
-    formData.append("text", content);
-
-    const res = await fetch("/api/posts", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) throw new Error(data.message);
-
-    setContent("");
-    onClose();
-    window.location.reload();
-  } catch (err) {
-    console.error("Post failed:", err);
-  }
-};
-
-//....
   const [text, setText] = useState("");
   const [feeling, setFeeling] = useState("");
   const [loading, setLoading] = useState(false);
@@ -61,7 +29,6 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
   const imageInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
 
-  // cleanup memory
   useEffect(() => {
     return () => {
       previewUrls.forEach((p) => URL.revokeObjectURL(p.url));
@@ -74,7 +41,6 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
     if (!files) return;
 
     const newFiles = Array.from(files);
-
     setMediaFiles((prev) => [...prev, ...newFiles]);
 
     const newPreviews = newFiles.map((file) => ({
@@ -86,24 +52,23 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
   };
 
   const handleCreatePost = async () => {
-    try {
-      if (!text.trim() && mediaFiles.length === 0) return;
+    if (!text.trim() && mediaFiles.length === 0) return;
 
+    try {
       setLoading(true);
 
       const token = user?.token;
+      if (!token) throw new Error("Unauthorized");
 
       const formData = new FormData();
-
       formData.append("text", text);
       formData.append("feeling", feeling);
 
       mediaFiles.forEach((file) => {
         formData.append("mediaFile", file);
-
         formData.append(
           "mediaType",
-          file.type.startsWith("video") ? "video" : "image",
+          file.type.startsWith("video") ? "video" : "image"
         );
       });
 
@@ -117,18 +82,15 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
 
       if (!res.ok) throw new Error(await res.text());
 
-      // ⭐ RESET
       setText("");
       setFeeling("");
       setMediaFiles([]);
       setPreviewUrls([]);
 
-      // ⭐ REFRESH FEED
       onPostCreated();
-
       onClose();
     } catch (err) {
-      console.error(err);
+      console.error("Post creation failed:", err);
     } finally {
       setLoading(false);
     }
@@ -150,6 +112,7 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
         <div className="flex items-center space-x-3 mb-4">
           <img
             src={user?.avatarUrl || "https://picsum.photos/40/40"}
+            alt="User avatar"
             className="w-10 h-10 rounded-full"
           />
           <span className="text-white">{user?.name || "User"}</span>
@@ -169,20 +132,21 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
           className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white min-h-[120px]"
         />
 
-        {/* PREVIEW GRID */}
         {previewUrls.length > 0 && (
           <div
-            className={`grid gap-2 mt-3 ${previewUrls.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}
+            className={`grid gap-2 mt-3 ${
+              previewUrls.length === 1 ? "grid-cols-1" : "grid-cols-2"
+            }`}
           >
             {previewUrls.map((p, i) => (
               <div key={i} className="relative group">
                 <button
                   onClick={() => {
                     setPreviewUrls((prev) =>
-                      prev.filter((_, index) => index !== i),
+                      prev.filter((_, index) => index !== i)
                     );
                     setMediaFiles((prev) =>
-                      prev.filter((_, index) => index !== i),
+                      prev.filter((_, index) => index !== i)
                     );
                   }}
                   className="absolute top-2 right-2 z-10 bg-black/70 hover:bg-black rounded-full p-1 opacity-0 group-hover:opacity-100 transition"
@@ -193,6 +157,7 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
                 {p.type === "image" ? (
                   <img
                     src={p.url}
+                    alt="Preview"
                     className="w-full h-52 object-cover rounded-md"
                   />
                 ) : (
@@ -242,24 +207,21 @@ const PostContentModal: React.FC<PostContentModalProps> = ({
           </div>
 
           <button
-            onClick={handlePost}
+            onClick={handleCreatePost}
+            disabled={loading}
             className="
               bg-orange-500
               hover:bg-orange-600
-              text-whiteA
+              text-white
               px-4 py-2
               rounded-lg
               font-medium
+              disabled:opacity-60
+              disabled:cursor-not-allowed
             "
-            onClick={handleCreatePost}
-            disabled={loading}
-            className="bg-orange-500 hover:bg-orange-600 px-4 py-2 rounded-lg"
           >
             {loading ? "Posting..." : "Post"}
           </button>
-
-
-   
         </div>
       </div>
     </div>
