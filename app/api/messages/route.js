@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/dbConnect';
+import connectDB from '../../../lib/dbConnect';
 import Message from '@/models/Message';
 import Conversation from '@/models/Conversation';
 import { verifyToken } from '@/lib/auth';

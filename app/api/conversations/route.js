@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/dbConnect';
+import connectDB from '../../../lib/dbConnect';
 import Conversation from '@/models/Conversation';
 import Message from '@/models/Message';
-import { verifyToken } from '@/lib/auth';
+import { verifyToken } from '../../../lib/auth';
 import User from "@/models/User";
 import jwt from "jsonwebtoken";
 

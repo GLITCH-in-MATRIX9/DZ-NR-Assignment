@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/db";
+import dbConnect from "../../../lib/dbConnect";
 import User from "@/models/User";
 import { getUserFromToken } from "@/lib/auth";
 
@@ -17,11 +17,10 @@ export async function PUT(req: Request) {
     const updatedUser = await User.findByIdAndUpdate(
       user.id,
       { name, bio, profilePic },
-      { new: true }
+      { new: true },
     ).select("-password");
 
     return NextResponse.json(updatedUser);
-
   } catch (error) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

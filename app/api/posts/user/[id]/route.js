@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import dbConnect from "@/lib/dbConnect";
+import dbConnect from "../../../lib/dbConnect";
 import Post from "@/models/Post";
 import mongoose from "mongoose";
 
@@ -9,9 +9,9 @@ export async function GET(req, context) {
 
     const { id: userId } = await context.params;
 
-    const posts = await Post.find({ 
+    const posts = await Post.find({
       author: new mongoose.Types.ObjectId(userId),
-     })
+    })
       .populate("author", "name avatarUrl")
       .sort({ createdAt: -1 });
 
