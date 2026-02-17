@@ -39,17 +39,17 @@ export default function ProfileHeader({
   };
 
   return (
-    <section className="relative bg-gradient-to-br from-neutral-900/80 via-neutral-900 to-neutral-800/80 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden">
+    <section className="relative bg-gradient-to-br from-neutral-950/80 via-neutral-900 to-neutral-900/80 backdrop-blur-xl rounded-3xl border border-white/10 overflow-hidden">
       
       {/* Outer Glow */}
-      <div className="absolute -inset-px bg-gradient-to-r from-orange-500/20 via-transparent to-orange-600/20 rounded-3xl blur-sm" />
+      <div className="absolute -inset-px bg-gradient-to-r from-orange-900/20 via-transparent to-orange-900/20 rounded-3xl blur-sm" />
       
       {/* COVER */}
       <div className="relative h-52 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-orange-500/40 via-orange-600/20 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-r from-orange-800/40 via-orange-600/20 to-black" />
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-neutral-900" />
         {/* Grid pattern overlay */}
-        <div className="absolute inset-0 opacity-10"
+        <div className="absolute inset-0 opacity-20"
           style={{
             backgroundImage: `radial-gradient(circle at 1px 1px, orange 1px, transparent 0)`,
             backgroundSize: '40px 40px'
@@ -66,7 +66,7 @@ export default function ProfileHeader({
           {/* Avatar */}
           <div className="flex items-end gap-5">
             <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full opacity-0 group-hover:opacity-100 blur-md transition-all duration-500" />
+              <div className="absolute -inset-1 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full opacity-0 group-hover:opacity-30 blur-md transition-all duration-500" />
               <div className="relative p-1 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full">
                 <img
                   src={profile?.avatarUrl || `https://picsum.photos/200?random=${userId}`}
@@ -79,7 +79,7 @@ export default function ProfileHeader({
 
             <div className="mb-3 space-y-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-white">{profile?.name}</h1>
+                <h1 className="text-2xl font-superbold text-white">{profile?.name}</h1>
                 {/* Verified */}
                 <div className="w-6 h-6 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center">
                   <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
