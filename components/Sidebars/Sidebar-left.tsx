@@ -11,6 +11,7 @@ import {
   Menu,
   PanelLeftClose,
   PanelLeftOpen,
+  Sparkles,
 } from "lucide-react";
 
 /* =========================
@@ -22,7 +23,7 @@ const menuSections = [
     title: "MAIN MENU",
     links: [
       { name: "Home Page", icon: Home, path: "/" },
-      { name: "Trending Topics", icon: Hash, path: "/trending" },
+      { name: "Trending Topics", icon: Hash, path: "/trending", comingSoon: true },
       { name: "Popular Creator", icon: Heart, path: "/creators" },
     ],
     defaultOpen: true,
@@ -41,7 +42,7 @@ const contacts = [
 ];
 
 /* =========================
-   TYPES (IMPORTANT FOR TS BUILD)
+   TYPES
 ========================= */
 
 interface MenuItemProps {
@@ -49,6 +50,7 @@ interface MenuItemProps {
   name: string;
   isActive?: boolean;
   collapsed: boolean;
+  comingSoon?: boolean;
   onClick: () => void;
 }
 
@@ -77,14 +79,15 @@ const MenuItem = ({
   name,
   isActive = false,
   collapsed,
+  comingSoon = false,
   onClick,
 }: MenuItemProps) => (
   <div
     onClick={onClick}
     className={`
-      flex items-center
+      relative flex items-center
       ${collapsed ? "justify-center" : ""}
-      p-3 my-0.5 rounded-lg cursor-pointer text-sm transition-all
+      p-3 my-0.5 rounded-lg cursor-pointer text-sm transition-all group
       ${
         isActive
           ? "bg-[#151515] text-white border border-orange-500/20 shadow-md"
@@ -93,7 +96,20 @@ const MenuItem = ({
     `}
   >
     <Icon className="w-5 h-5 shrink-0" />
-    {!collapsed && <span className="ml-3">{name}</span>}
+    {!collapsed && (
+      <div className="flex-1 flex items-center justify-between ml-3">
+        <span>{name}</span>
+        {comingSoon && (
+          <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 bg-orange-500/20 text-orange-400 rounded-full border border-orange-500/20">
+            <Sparkles className="w-2.5 h-2.5" />
+            Soon
+          </span>
+        )}
+      </div>
+    )}
+    {collapsed && comingSoon && (
+      <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-500 rounded-full border border-black" />
+    )}
   </div>
 );
 
@@ -160,6 +176,7 @@ const MenuSection = ({
             name={link.name}
             isActive={currentPath === link.path}
             collapsed={collapsed}
+            comingSoon={link.comingSoon}
             onClick={() => onNavigate(link.path)}
           />
         ))}

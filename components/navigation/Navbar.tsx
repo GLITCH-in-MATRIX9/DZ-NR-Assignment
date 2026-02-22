@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   X,
+  Sparkles,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useRouter } from "next/navigation";
@@ -77,18 +78,20 @@ const Navbar = () => {
           </div>
 
 
-          {/* DESKTOP SEARCH */}
+          {/* DESKTOP SEARCH - COMING SOON */}
           <div className="hidden md:flex flex-1 justify-center">
-            <div className="relative w-[520px] rounded-full p-[1px] bg-gradient-to-r from-orange-500/60 via-orange-400/30 to-transparent">
+            <div className="relative w-[520px] rounded-full p-[1px] bg-gradient-to-r from-orange-500/40 via-orange-400/20 to-transparent">
               <div className="flex items-center bg-[#111] rounded-full px-4 py-2">
-                <Search className="w-4 h-4 text-gray-400 mr-3" />
+                <Search className="w-4 h-4 text-gray-400/50 mr-3" />
                 <input
-                  placeholder="Find anything"
-                  className="flex-1 bg-transparent outline-none text-sm text-gray-200"
+                  placeholder="Search coming soon... "
+                  disabled
+                  className="flex-1 bg-transparent outline-none text-sm text-gray-400 placeholder-gray-600 cursor-not-allowed"
                 />
-                <button className="flex items-center gap-1 text-orange-400 text-xs bg-black/40 px-3 py-1 rounded-full">
-                  <Flame className="w-4 h-4" /> Ask
-                </button>
+                <div className="flex items-center gap-1.5 text-orange-400/70 text-xs bg-black/40 px-3 py-1 rounded-full border border-orange-500/20">
+                  <Sparkles className="w-3 h-3" />
+                  <span className="font-medium">Soon</span>
+                </div>
               </div>
             </div>
           </div>
@@ -97,12 +100,12 @@ const Navbar = () => {
           <div className="hidden md:flex items-center gap-3">
             {!user && (
               <>
-                <button className="text-white px-4 py-2 rounded-full bg-[#1a1a1a]">
+                <button className="text-white px-4 py-2 rounded-full bg-[#1a1a1a] hover:bg-[#252525] transition-colors">
                   Get App
                 </button>
                 <button
                   onClick={() => router.push("/auth/login")}
-                  className="bg-orange-500 px-4 py-2 rounded-full text-white font-semibold"
+                  className="bg-orange-500 px-4 py-2 rounded-full text-white font-semibold hover:bg-orange-600 transition-colors"
                 >
                   Log In
                 </button>
@@ -114,11 +117,11 @@ const Navbar = () => {
                 {/* NOTIFICATIONS */}
                 <button
                   onClick={() => setOpenNotifications((p) => !p)}
-                  className="relative p-2 rounded-full hover:bg-white/10"
+                  className="relative p-2 rounded-full hover:bg-white/10 transition-colors"
                 >
                   <Bell className="w-5 h-5 text-white" />
                   {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-orange-500 rounded-full" />
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
                   )}
                 </button>
 
@@ -126,7 +129,7 @@ const Navbar = () => {
                 <div className="relative" ref={dropdownRef}>
                   <img
                     src={avatarSrc}
-                    className="w-9 h-9 rounded-full cursor-pointer"
+                    className="w-9 h-9 rounded-full cursor-pointer ring-2 ring-transparent hover:ring-orange-500/30 transition-all"
                     onClick={() => setOpenDropdown((p) => !p)}
                   />
 
@@ -137,7 +140,7 @@ const Navbar = () => {
                           setOpenDropdown(false);
                           router.push("/profile");
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/10"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors"
                       >
                         <User className="w-4 h-4" />
                         Profile
@@ -148,7 +151,7 @@ const Navbar = () => {
                           setOpenDropdown(false);
                           router.push("/settings");
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/10"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-white hover:bg-white/10 transition-colors"
                       >
                         <Settings className="w-4 h-4" />
                         Settings
@@ -159,7 +162,7 @@ const Navbar = () => {
                           setOpenDropdown(false);
                           logout();
                         }}
-                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-white/10"
+                        className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-400 hover:bg-white/10 transition-colors"
                       >
                         <LogOut className="w-4 h-4" />
                         Logout
@@ -184,12 +187,17 @@ const Navbar = () => {
       {/* MOBILE MENU */}
       {mobileMenu && (
         <div className="md:hidden bg-black/95 border-t border-white/10 px-4 py-4 space-y-4">
-          <div className="flex items-center bg-[#111] rounded-full px-4 py-2">
-            <Search className="w-4 h-4 text-gray-400 mr-3" />
-            <input
-              placeholder="Search"
-              className="flex-1 bg-transparent outline-none text-sm text-white"
-            />
+          {/* MOBILE SEARCH - COMING SOON */}
+          <div className="relative rounded-full p-[1px] bg-gradient-to-r from-orange-500/40 via-orange-400/20 to-transparent">
+            <div className="flex items-center bg-[#111] rounded-full px-4 py-2">
+              <Search className="w-4 h-4 text-gray-400/50 mr-3" />
+              <input
+                placeholder="Search (coming soon)"
+                disabled
+                className="flex-1 bg-transparent outline-none text-sm text-gray-400 placeholder-gray-600 cursor-not-allowed"
+              />
+              <Sparkles className="w-4 h-4 text-orange-400/70" />
+            </div>
           </div>
 
           {!user && (
